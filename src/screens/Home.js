@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import {
+  cavityAtom,
+  factoryCodeAtom,
+  inspectorNameAtom,
+  lotNumberAtom,
+  moldNumberAtom,
+  noteAtom,
+  processNumberAtom,
+  productionDateAtom,
+  productTypeAtom,
+  specialtyAtom,
+} from "../atom";
 import Tag from "../components/Tag";
 
 const Container = styled.div`
@@ -76,6 +89,17 @@ function Home() {
   const [array, setArray] = useState([]);
   const [result, setResult] = useState([]);
 
+  const processCode = useRecoilValue(processNumberAtom);
+  const factoryCode = useRecoilValue(factoryCodeAtom);
+  const moldNumber = useRecoilValue(moldNumberAtom);
+  const cavity = useRecoilValue(cavityAtom);
+  const lotNumber = useRecoilValue(lotNumberAtom);
+  const productionDate = useRecoilValue(productionDateAtom);
+  const productionType = useRecoilValue(productTypeAtom);
+  const inspectorName = useRecoilValue(inspectorNameAtom);
+  const note = useRecoilValue(noteAtom);
+  const specialty = useRecoilValue(specialtyAtom);
+
   const fileReader = new FileReader("UTF8");
 
   const BottomDataSet = () => {
@@ -87,18 +111,18 @@ function Home() {
 
     for (let i = 0; i < inspectionItemList.length; i++) {
       bottomRowData.push(`\n${partNumber}`);
-      bottomRowData.push(`공정코드`);
-      bottomRowData.push(`공장코드`);
-      bottomRowData.push(`금형번호`);
-      bottomRowData.push(`Cavity`);
-      bottomRowData.push(`LOT Number`);
+      bottomRowData.push(`${processCode.split("/")[0]}`);
+      bottomRowData.push(`${factoryCode}`);
+      bottomRowData.push(`${moldNumber}`);
+      bottomRowData.push(`${cavity}`);
+      bottomRowData.push(`${lotNumber}`);
       bottomRowData.push(`${inspectionDateTime}`);
-      bottomRowData.push(`생산일자`);
-      bottomRowData.push(`초중종품`);
-      bottomRowData.push(`검사자명`);
+      bottomRowData.push(`${productionDate}`);
+      bottomRowData.push(`${productionType}`);
+      bottomRowData.push(`${inspectorName}`);
       bottomRowData.push(`${inspectionJudgment}`);
-      bottomRowData.push(``);
-      bottomRowData.push(``);
+      bottomRowData.push(`${note}`);
+      bottomRowData.push(`${specialty}`);
       bottomRowData.push(`${i}`);
       bottomRowData.push(`${inspectionItemResult[i]}`);
     }
@@ -219,16 +243,16 @@ function Home() {
         <Tag />
         <GridBox>
           <div>
-            <div>공정코드 : </div>
-            <div>공장코드 : </div>
-            <div>금형번호 : </div>
-            <div>Cavity : </div>
-            <div>LOT No : </div>
-            <div>생산일자(YYYYMMDD) : </div>
-            <div>초중종품(A:초품, B:중품, C:종품) : </div>
-            <div>검사자명 : </div>
-            <div>비고 : </div>
-            <div>특기 : </div>
+            <div>공정코드 : {processCode}</div>
+            <div>공장코드 : {factoryCode}</div>
+            <div>금형번호 : {moldNumber}</div>
+            <div>Cavity : {cavity}</div>
+            <div>LOT No : {lotNumber}</div>
+            <div>생산일자(YYYYMMDD) : {productionDate}</div>
+            <div>초중종품(A:초품, B:중품, C:종품) : {productionType}</div>
+            <div>검사자명 : {inspectorName}</div>
+            <div>비고 : {note}</div>
+            <div>특기 : {specialty}</div>
           </div>
         </GridBox>
         <BtnExportCsv

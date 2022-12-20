@@ -57,6 +57,7 @@ function Tag() {
   ];
 
   const factorycode = ["1공장", "2공장"];
+  const producttype = ["초품", "중품", "종품"];
 
   return (
     <div>
@@ -113,7 +114,7 @@ function Tag() {
           <OverviewBox data={[]} />
         </Route>
         <Route path={`/producttype`}>
-          <OverviewBox data={[]} />
+          <OverviewBox data={producttype} />
         </Route>
         <Route path={`/inspectorname`}>
           <OverviewBox data={[]} />
