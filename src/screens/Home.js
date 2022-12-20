@@ -1,4 +1,37 @@
 import { useEffect, useState } from "react";
+import styled from "styled-components";
+import Tag from "../components/Tag";
+
+const Container = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+`;
+const ReadContainer = styled.div`
+  width: 30%;
+`;
+const ExportContainer = styled(ReadContainer)``;
+
+const GridBox = styled.div`
+  border: 1px solid ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+`;
+
+const ReadDataList = styled.div``;
+
+const BtnReadCsv = styled.button`
+  border: 1px solid ${(props) => props.theme.textColor};
+  border-radius: 10px;
+  font-size: 14px;
+  height: 40px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => props.theme.accentColor};
+  }
+`;
+const BtnExportCsv = styled(BtnReadCsv)``;
 
 function Home() {
   const topRow = ["V", "", "공장코드", ""];
@@ -123,6 +156,7 @@ function Home() {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    console.log(":Ddd");
     if (file) {
       fileReader.onload = function (event) {
         const text = event.target.result;
@@ -155,38 +189,57 @@ function Home() {
   };
 
   useEffect(() => {
-    console.log(result);
+    console.log(headerKeys);
   }, [array, result, headerKeys]);
 
   return (
-    <div>
-      <form>
+    <Container>
+      <ReadContainer>
+        <h1>파일 불러오기</h1>
         <input type={"file"} accept={".csv"} onChange={handleOnChange} />
-      </form>
-      <button
-        onClick={(e) => {
-          handleOnSubmit(e);
-        }}
-      >
-        Read CSV File
-      </button>
-      <button
-        onClick={(e) => {
-          downLoadCSV(e);
-        }}
-      >
-        Export CSV
-      </button>
+        <BtnReadCsv
+          onClick={(e) => {
+            handleOnSubmit(e);
+          }}
+        >
+          Read CSV File
+        </BtnReadCsv>
 
-      <div>
-        {headerKeys.map((item, index) => (
-          <div key={index}>
-            <span>{item} = </span>
-            <span>{result[index]}</span>
+        <GridBox>
+          {headerKeys.map((item, index) => (
+            <ReadDataList key={index}>
+              <span>{item === "" ? "" : item + " = "}</span>
+              <span>{result[index] === "" ? "X" : result[index]}</span>
+            </ReadDataList>
+          ))}
+        </GridBox>
+      </ReadContainer>
+      <ExportContainer>
+        <h1>파일 변환하기 설정</h1>
+        <Tag />
+        <GridBox>
+          <div>
+            <div>공정코드 : </div>
+            <div>공장코드 : </div>
+            <div>금형번호 : </div>
+            <div>Cavity : </div>
+            <div>LOT No : </div>
+            <div>생산일자(YYYYMMDD) : </div>
+            <div>초중종품(A:초품, B:중품, C:종품) : </div>
+            <div>검사자명 : </div>
+            <div>비고 : </div>
+            <div>특기 : </div>
           </div>
-        ))}
-      </div>
-    </div>
+        </GridBox>
+        <BtnExportCsv
+          onClick={(e) => {
+            downLoadCSV(e);
+          }}
+        >
+          Export CSV
+        </BtnExportCsv>
+      </ExportContainer>
+    </Container>
   );
 }
 
