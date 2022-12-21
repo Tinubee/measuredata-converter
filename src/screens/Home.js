@@ -13,23 +13,46 @@ import {
   productTypeAtom,
   specialtyAtom,
 } from "../atom";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 import Tag from "../components/Tag";
+
+const Wrap = styled.div`
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 100px;
+  width: 100%;
+`;
 
 const Container = styled.div`
   display: flex;
   justify-content: space-evenly;
+  height: 100vh;
 `;
 const ReadContainer = styled.div`
-  width: 30%;
+  width: 40%;
 `;
+const ReadSectionTitle = styled.div``;
 const ExportContainer = styled(ReadContainer)``;
-
+const ExportSectionTitle = styled.div``;
 const GridBox = styled.div`
   border: 1px solid ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.bgColor};
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 5px;
   margin-top: 10px;
+  overflow-y: auto;
+  max-height: 90vh;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 10px;
+    background: ${(props) => props.theme.bgColor};
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${(props) => props.theme.textColor};
+    border-radius: 10px;
+  }
 `;
 
 const ReadDataList = styled.div``;
@@ -44,7 +67,9 @@ const BtnReadCsv = styled.button`
     background-color: ${(props) => props.theme.accentColor};
   }
 `;
-const BtnExportCsv = styled(BtnReadCsv)``;
+const BtnExportCsv = styled(BtnReadCsv)`
+  margin: auto;
+`;
 
 function Home() {
   const topRow = ["V", "", "공장코드", ""];
@@ -108,6 +133,8 @@ function Home() {
     const inspectionItemResult = result.slice(7, result.length);
     const inspectionDateTime = DateFormat(result[1]);
     const inspectionJudgment = result[4] === "Fail" ? "F" : "A";
+    const changeProductionType =
+      productionType === "초품" ? "A" : productionType === "중품" ? "B" : "C";
 
     for (let i = 0; i < inspectionItemList.length; i++) {
       bottomRowData.push(`\n${partNumber}`);
@@ -118,7 +145,7 @@ function Home() {
       bottomRowData.push(`${lotNumber}`);
       bottomRowData.push(`${inspectionDateTime}`);
       bottomRowData.push(`${productionDate}`);
-      bottomRowData.push(`${productionType}`);
+      bottomRowData.push(`${changeProductionType}`);
       bottomRowData.push(`${inspectorName}`);
       bottomRowData.push(`${inspectionJudgment}`);
       bottomRowData.push(`${note}`);
@@ -217,53 +244,57 @@ function Home() {
   }, [array, result, headerKeys]);
 
   return (
-    <Container>
-      <ReadContainer>
-        <h1>파일 불러오기</h1>
-        <input type={"file"} accept={".csv"} onChange={handleOnChange} />
-        <BtnReadCsv
-          onClick={(e) => {
-            handleOnSubmit(e);
-          }}
-        >
-          Read CSV File
-        </BtnReadCsv>
+    <Wrap>
+      <Header />
+      <Container>
+        <ReadContainer>
+          <ReadSectionTitle>파일 불러오기</ReadSectionTitle>
+          <input type={"file"} accept={".csv"} onChange={handleOnChange} />
+          <BtnReadCsv
+            onClick={(e) => {
+              handleOnSubmit(e);
+            }}
+          >
+            CSV 파일 읽기
+          </BtnReadCsv>
 
-        <GridBox>
-          {headerKeys.map((item, index) => (
-            <ReadDataList key={index}>
-              <span>{item === "" ? "" : item + " = "}</span>
-              <span>{result[index] === "" ? "X" : result[index]}</span>
-            </ReadDataList>
-          ))}
-        </GridBox>
-      </ReadContainer>
-      <ExportContainer>
-        <h1>파일 변환하기 설정</h1>
-        <Tag />
-        <GridBox>
-          <div>
-            <div>공정코드 : {processCode}</div>
-            <div>공장코드 : {factoryCode}</div>
-            <div>금형번호 : {moldNumber}</div>
-            <div>Cavity : {cavity}</div>
-            <div>LOT No : {lotNumber}</div>
-            <div>생산일자(YYYYMMDD) : {productionDate}</div>
-            <div>초중종품(A:초품, B:중품, C:종품) : {productionType}</div>
-            <div>검사자명 : {inspectorName}</div>
-            <div>비고 : {note}</div>
-            <div>특기 : {specialty}</div>
-          </div>
-        </GridBox>
+          <GridBox>
+            {headerKeys.map((item, index) => (
+              <ReadDataList key={index}>
+                <span>{item === "" ? "" : item + " = "}</span>
+                <span>{result[index] === "" ? "X" : result[index]}</span>
+              </ReadDataList>
+            ))}
+          </GridBox>
+        </ReadContainer>
         <BtnExportCsv
           onClick={(e) => {
             downLoadCSV(e);
           }}
         >
-          Export CSV
+          변환 파일 다운로드
         </BtnExportCsv>
-      </ExportContainer>
-    </Container>
+        <ExportContainer>
+          <ExportSectionTitle>파일 변환하기 설정</ExportSectionTitle>
+          <Tag />
+          <GridBox>
+            <div>
+              <div>공정코드 : {processCode}</div>
+              <div>공장코드 : {factoryCode}</div>
+              <div>금형번호 : {moldNumber}</div>
+              <div>Cavity : {cavity}</div>
+              <div>LOT No : {lotNumber}</div>
+              <div>생산일자(YYYYMMDD) : {productionDate}</div>
+              <div>초중종품(A:초품, B:중품, C:종품) : {productionType}</div>
+              <div>검사자명 : {inspectorName}</div>
+              <div>비고 : {note}</div>
+              <div>특기 : {specialty}</div>
+            </div>
+          </GridBox>
+        </ExportContainer>
+      </Container>
+      <Footer />
+    </Wrap>
   );
 }
 
