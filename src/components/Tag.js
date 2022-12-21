@@ -37,27 +37,27 @@ function Tag() {
   const specialtyMatch = useRouteMatch("/specialty");
 
   const processcode = [
-    "A01 / 조립",
-    "A02 / 선별",
-    "A03 / 완제품",
-    "A04 / 사출",
-    "A05 / 프레스",
-    "A06 / 열처리",
-    "A07 / 용접대기",
-    "A08 / 용접완료",
-    "A09 / 코팅",
-    "A10 / 도금",
-    "A11 / 태핑",
-    "A12 / 도장",
-    "A13 / 스프링",
-    "A14 / 바렐",
-    "A15 / STEEL",
-    "A16 / RESIN",
-    "A17 / 부재료",
+    "A01/조립",
+    "A02/선별",
+    "A03/완제품",
+    "A04/사출",
+    "A05/프레스",
+    "A06/열처리",
+    "A07/용접대기",
+    "A08/용접완료",
+    "A09/코팅",
+    "A10/도금",
+    "A11/태핑",
+    "A12/도장",
+    "A13/스프링",
+    "A14/바렐",
+    "A15/STEEL",
+    "A16/RESIN",
+    "A17/부재료",
   ];
 
   const factorycode = ["1공장", "2공장"];
-  const producttype = ["초품", "중품", "종품"];
+  const producttype = ["초품/A", "중품/B", "종품/C"];
 
   return (
     <div>
@@ -78,10 +78,10 @@ function Tag() {
           <Link to={`/lotnumber`}>LOT No</Link>
         </Tab>
         <Tab isActive={productiondateMatch !== null}>
-          <Link to={`/productiondate`}>생산일자(YYYYMMDD)</Link>
+          <Link to={`/productiondate`}>생산일자</Link>
         </Tab>
         <Tab isActive={producttypeMatch !== null}>
-          <Link to={`/producttype`}>초중종품(A:초품, B:중품, C:종품)</Link>
+          <Link to={`/producttype`}>초중종품</Link>
         </Tab>
         <Tab isActive={inspectornameMatch !== null}>
           <Link to={`/inspectorname`}>검사자명</Link>

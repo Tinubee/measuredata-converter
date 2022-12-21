@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 
+export const checkDataAtom = atom({
+  key: "checkdata",
+  default: false,
+});
+
 export const processNumberAtom = atom({
   key: "processNumber",
   default: "",

@@ -1,17 +1,28 @@
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 
 const FooterContainer = styled.div`
   width: 100%;
-  height: 90px; /* 내용물에 따라 알맞는 값 설정 */
   bottom: 0px;
   position: absolute;
+  height: 10vh;
+  padding: 0 20px;
 `;
 
 function Footer() {
+  const developmentDate = 2022;
   return (
     <FooterContainer>
-      <div>email : hyoungmin.kim@hkcb.co.kr</div>
-      <div>&copy; {new Date().getFullYear()} Made by KIM HYOUNGMIN</div>
+      <div>
+        <FontAwesomeIcon icon={faPhone} /> Phone : 010-3190-4202
+      </div>
+      <div>📩 Email : hyoungmin.kim@hkcb.co.kr</div>
+      <hr />
+      <div>
+        &copy; {developmentDate}-{new Date().getFullYear()} KIM HYOUNG MIN.All
+        rights reserved.
+      </div>
     </FooterContainer>
   );
 }

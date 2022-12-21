@@ -1,3 +1,5 @@
+import { faFile } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -27,14 +29,62 @@ const Wrap = styled.div`
 const Container = styled.div`
   display: flex;
   justify-content: space-evenly;
-  height: 100vh;
+  height: 140vh;
+  border: 1px solid black;
 `;
 const ReadContainer = styled.div`
   width: 40%;
+  margin: 0px 20px;
 `;
-const ReadSectionTitle = styled.div``;
+const ReadSectionTitle = styled.div`
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+`;
 const ExportContainer = styled(ReadContainer)``;
-const ExportSectionTitle = styled.div``;
+const ExportSectionTitle = styled(ReadSectionTitle)``;
+
+const UploadFileBox = styled.label`
+  border: 1px dashed white;
+  font-size: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10%;
+  cursor: pointer;
+
+  &:hover {
+    border: 1px dashed aqua;
+    i {
+      color: aqua;
+    }
+  }
+`;
+
+const File = styled.div`
+  position: relative;
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const FileIcon = styled.i`
+  font-size: 38px;
+  position: absolute;
+`;
+
+const FileName = styled.div`
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+`;
+
 const GridBox = styled.div`
   border: 1px solid ${(props) => props.theme.textColor};
   background-color: ${(props) => props.theme.bgColor};
@@ -57,6 +107,11 @@ const GridBox = styled.div`
 
 const ReadDataList = styled.div``;
 
+const DataName = styled.span`
+  font-size: large;
+`;
+const DataValue = styled(DataName)``;
+
 const BtnReadCsv = styled.button`
   border: 1px solid ${(props) => props.theme.textColor};
   border-radius: 10px;
@@ -67,9 +122,28 @@ const BtnReadCsv = styled.button`
     background-color: ${(props) => props.theme.accentColor};
   }
 `;
-const BtnExportCsv = styled(BtnReadCsv)`
+
+const MiddleContainer = styled.div`
   margin: auto;
 `;
+
+const BtnExportCsv = styled(BtnReadCsv)``;
+
+const Line = styled.div`
+  border-left: 2px solid black;
+`;
+
+const InputData = styled.input`
+  font-size: large;
+`;
+
+const SettingInfo = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 15px;
+`;
+
+const SettingInfoItem = styled.div``;
 
 function Home() {
   const topRow = ["V", "", "공장코드", ""];
@@ -134,7 +208,11 @@ function Home() {
     const inspectionDateTime = DateFormat(result[1]);
     const inspectionJudgment = result[4] === "Fail" ? "F" : "A";
     const changeProductionType =
-      productionType === "초품" ? "A" : productionType === "중품" ? "B" : "C";
+      productionType.split("/")[0] === "초품"
+        ? "A"
+        : productionType.split("/")[0] === "중품"
+        ? "B"
+        : "C";
 
     for (let i = 0; i < inspectionItemList.length; i++) {
       bottomRowData.push(`\n${partNumber}`);
@@ -157,6 +235,9 @@ function Home() {
 
   const downLoadCSV = (e) => {
     e.preventDefault();
+    if (result.length === 0) {
+      return console.log("no data");
+    }
     let csv = [];
     BottomDataSet();
 
@@ -207,7 +288,6 @@ function Home() {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    console.log(":Ddd");
     if (file) {
       fileReader.onload = function (event) {
         const text = event.target.result;
@@ -240,8 +320,8 @@ function Home() {
   };
 
   useEffect(() => {
-    console.log(headerKeys);
-  }, [array, result, headerKeys]);
+    if (file !== undefined) console.log(file.name);
+  }, [array, result, headerKeys, file, productionType]);
 
   return (
     <Wrap>
@@ -249,7 +329,20 @@ function Home() {
       <Container>
         <ReadContainer>
           <ReadSectionTitle>파일 불러오기</ReadSectionTitle>
-          <input type={"file"} accept={".csv"} onChange={handleOnChange} />
+          <UploadFileBox>
+            <File></File>
+            <FileIcon>
+              <FontAwesomeIcon icon={faFile} />
+            </FileIcon>
+            <FileInput
+              type={"file"}
+              accept={".csv"}
+              onChange={handleOnChange}
+            />
+          </UploadFileBox>
+          <FileName>
+            {file !== undefined ? file.name : "선택된 파일 없음"}
+          </FileName>
           <BtnReadCsv
             onClick={(e) => {
               handleOnSubmit(e);
@@ -261,35 +354,63 @@ function Home() {
           <GridBox>
             {headerKeys.map((item, index) => (
               <ReadDataList key={index}>
-                <span>{item === "" ? "" : item + " = "}</span>
-                <span>{result[index] === "" ? "X" : result[index]}</span>
+                <DataName>{item === "" ? "" : item + " = "}</DataName>
+                <DataValue>
+                  {result[index] === "" ? "X" : result[index]}
+                </DataValue>
               </ReadDataList>
             ))}
           </GridBox>
         </ReadContainer>
-        <BtnExportCsv
-          onClick={(e) => {
-            downLoadCSV(e);
-          }}
-        >
-          변환 파일 다운로드
-        </BtnExportCsv>
+        <Line />
+        <MiddleContainer>
+          <BtnExportCsv
+            onClick={(e) => {
+              downLoadCSV(e);
+            }}
+          >
+            변환 파일 다운로드
+          </BtnExportCsv>
+        </MiddleContainer>
+        <Line />
         <ExportContainer>
           <ExportSectionTitle>파일 변환하기 설정</ExportSectionTitle>
           <Tag />
           <GridBox>
-            <div>
-              <div>공정코드 : {processCode}</div>
-              <div>공장코드 : {factoryCode}</div>
-              <div>금형번호 : {moldNumber}</div>
-              <div>Cavity : {cavity}</div>
-              <div>LOT No : {lotNumber}</div>
-              <div>생산일자(YYYYMMDD) : {productionDate}</div>
-              <div>초중종품(A:초품, B:중품, C:종품) : {productionType}</div>
-              <div>검사자명 : {inspectorName}</div>
-              <div>비고 : {note}</div>
-              <div>특기 : {specialty}</div>
-            </div>
+            <SettingInfo>
+              <SettingInfoItem>
+                공정코드 : <InputData value={processCode} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                공장코드 : <InputData value={factoryCode} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                금형번호 : <InputData value={moldNumber} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                Cavity : <InputData value={cavity} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                LOT No : <InputData value={lotNumber} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                생산일자(YYYYMMDD) :{" "}
+                <InputData value={productionDate} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                초중종품(A:초품, B:중품, C:종품) :{" "}
+                <InputData value={productionType} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                검사자명 : <InputData value={inspectorName} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                비고 : <InputData value={note} disabled />
+              </SettingInfoItem>
+              <SettingInfoItem>
+                특기 : <InputData value={specialty} disabled />
+              </SettingInfoItem>
+            </SettingInfo>
           </GridBox>
         </ExportContainer>
       </Container>
