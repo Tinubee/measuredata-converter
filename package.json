@@ -11,7 +11,8 @@
     "mac": {
       "target": [
         "default"
-      ]
+      ],
+      "icon": "./public/icon.icns"
     },
     "dmg": {
       "title": "Start Electron"
@@ -25,7 +26,8 @@
             "ia32"
           ]
         }
-      ]
+      ],
+      "icon": "./public/favicon.ico"
     },
     "nsis": {
       "oneClick": false,

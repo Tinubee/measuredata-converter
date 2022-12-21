@@ -13,6 +13,7 @@ function createWindow() {
       enableRemoteModule: true,
       devTools: isDev,
     },
+    icon: __dirname + "/logo1024.png",
   });
 
   mainWindow.loadURL(
