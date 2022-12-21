@@ -74,7 +74,7 @@ export const Button = styled.button`
 function OverviewBox({ data }) {
   const { pathname } = useLocation();
   const [btnActive, setBtnActive] = useState("");
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const setProcessCode = useSetRecoilState(processNumberAtom);
   const setFactoryCode = useSetRecoilState(factoryCodeAtom);
   const setMoldNumber = useSetRecoilState(moldNumberAtom);
@@ -88,17 +88,22 @@ function OverviewBox({ data }) {
 
   const toggleActive = (e) => {
     setBtnActive(e.target.innerText);
+    if (pathname === "/processcode") {
+      setProcessCode(e.target.innerText);
+    } else if (pathname === "/factorycode") {
+      setFactoryCode(e.target.innerText);
+    } else if (pathname === "/producttype") {
+      setProductionType(e.target.innerText);
+    }
   };
 
-  useEffect(() => {
-    if (pathname === "/processcode") {
-      setProcessCode(btnActive);
-    } else if (pathname === "/factorycode") {
-      setFactoryCode(btnActive);
-    } else if (pathname === "/producttype") {
-      setProductionType(btnActive);
-    }
-  }, [btnActive, pathname, setProcessCode, setFactoryCode, setProductionType]);
+  useEffect(() => {}, [
+    btnActive,
+    pathname,
+    setProcessCode,
+    setFactoryCode,
+    setProductionType,
+  ]);
 
   const handleValid = ({ value }) => {
     if (pathname === "/inspectorname") {
@@ -116,6 +121,7 @@ function OverviewBox({ data }) {
     } else if (pathname === "/specialty") {
       setSpecialty(value);
     }
+    setValue("value", "");
   };
   return (
     <GridBox>
