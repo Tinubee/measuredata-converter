@@ -3,8 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import DatePicker from "react-datepicker";
+import { ko } from "date-fns/locale";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   cavityAtom,
   factoryCodeAtom,
@@ -71,6 +74,21 @@ export const Button = styled.button`
   border-radius: 5px;
 `;
 
+const Calendar = styled(DatePicker)`
+  border-radius: 8px;
+  padding: 3px 10px;
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
+  cursor: pointer;
+  font-size: large;
+`;
+
+const CalendarForm = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: center;
+`;
+
 function OverviewBox({ data }) {
   const { pathname } = useLocation();
   const [btnActive, setBtnActive] = useState("");
@@ -80,11 +98,13 @@ function OverviewBox({ data }) {
   const setMoldNumber = useSetRecoilState(moldNumberAtom);
   const setCavity = useSetRecoilState(cavityAtom);
   const setLotNumber = useSetRecoilState(lotNumberAtom);
-  const setProductionDate = useSetRecoilState(productionDateAtom);
+  const [productionDate, setProductionDate] =
+    useRecoilState(productionDateAtom);
   const setProductionType = useSetRecoilState(productTypeAtom);
   const setInspectorName = useSetRecoilState(inspectorNameAtom);
   const setNote = useSetRecoilState(noteAtom);
   const setSpecialty = useSetRecoilState(specialtyAtom);
+  const [startDate, setStartDate] = useState(new Date());
 
   const toggleActive = (e) => {
     setBtnActive(e.target.innerText);
@@ -103,6 +123,7 @@ function OverviewBox({ data }) {
     setProcessCode,
     setFactoryCode,
     setProductionType,
+    productionDate,
   ]);
 
   const handleValid = ({ value }) => {
@@ -123,21 +144,42 @@ function OverviewBox({ data }) {
     }
     setValue("value", "");
   };
+
+  const dateToString = (date) => {
+    setStartDate(date);
+    setProductionDate(date.toISOString().slice(0, 10).replace(/-/g, ""));
+  };
+
   return (
     <GridBox>
       <Container>
         {data.length === 0 ? (
-          <Form onSubmit={handleSubmit(handleValid)}>
-            <Input
-              {...register("value", {
-                required: "값을 입력해주세요.",
-              })}
-              placeholder="입력하기..."
-            />
-            <Button>
-              <FontAwesomeIcon icon={faPlus} />
-            </Button>
-          </Form>
+          pathname === "/productiondate" ? (
+            <CalendarForm>
+              <Calendar
+                selected={startDate}
+                dateFormat="yyyy년 MM월 dd일"
+                onChange={(date) => dateToString(date)}
+                maxDate={new Date()}
+                locale={ko}
+                onKeyDown={(e) => {
+                  e.preventDefault();
+                }}
+              />
+            </CalendarForm>
+          ) : (
+            <Form onSubmit={handleSubmit(handleValid)}>
+              <Input
+                {...register("value", {
+                  required: "값을 입력해주세요.",
+                })}
+                placeholder="입력하기..."
+              />
+              <Button>
+                <FontAwesomeIcon icon={faPlus} />
+              </Button>
+            </Form>
+          )
         ) : (
           <Overview>
             {data.map((item, index) => {
