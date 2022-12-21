@@ -7,7 +7,36 @@
   "build": {
     "productName": "HKC-DataConvertor",
     "asar": true,
-    "appId": "org.sss.electron-react"
+    "appId": "org.sss.electron-react",
+    "mac": {
+      "target": [
+        "default"
+      ]
+    },
+    "dmg": {
+      "title": "Start Electron"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true
+    },
+    "directories": {
+      "buildResources": "./resources/installer/",
+      "output": "./dist/",
+      "app": "."
+    }
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -36,7 +65,8 @@
     "eject": "react-scripts eject",
     "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "npm run react-build && electron-builder",
-    "release": "npm run react-build && electron-builder --publish=always"
+    "release": "npm run react-build && electron-builder --publish=always",
+    "deploy:win64": "electron-builder --win nsis:x64"
   },
   "eslintConfig": {
     "extends": [
