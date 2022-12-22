@@ -22,7 +22,7 @@ const Content = styled.div`
 function Header() {
   return (
     <Top>
-      <Content>측정 데이터 변환 프로그램</Content>
+      <Content>KEYENCE 측정 데이터 변환 프로그램</Content>
     </Top>
   );
 }
