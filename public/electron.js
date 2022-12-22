@@ -90,7 +90,7 @@ autoUpdater.on("update-downloaded", () => {
   progressBar.setCompleted();
 
   dialog
-    .showMessageBox(window, {
+    .showMessageBox({
       type: "info",
       title: "Update",
       message: "새로운 버전이 다운로드 되었습니다. 다시 시작하시겠습니까?",
