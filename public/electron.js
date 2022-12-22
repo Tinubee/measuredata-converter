@@ -60,7 +60,15 @@ autoUpdater.on("update-available", () => {
     .then((result) => {
       const { response } = result;
 
-      if (response === 0) autoUpdater.downloadUpdate();
+      if (response === 0) {
+        setImmediate(() => {
+          app.removeAllListeners("window-all-closed");
+          if (mainWindow != null) {
+            mainWindow.close();
+          }
+          autoUpdater.quitAndInstall(false);
+        });
+      }
     });
 });
 
