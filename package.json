@@ -5,6 +5,13 @@
   "main": "./public/electron.js",
   "homepage": "./",
   "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Tinubee",
+        "repo": "measuredata-converter"
+      }
+    ],
     "productName": "HKC-DataConvertor",
     "asar": true,
     "appId": "org.sss.electron-react",
@@ -70,7 +77,8 @@
     "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "build": "npm run react-build && electron-builder",
     "release": "npm run react-build && electron-builder --publish=always",
-    "deploy:win64": "electron-builder --win nsis:x64"
+    "deploy:win64": "electron-builder --win nsis:x64",
+    "publish": "electron-builder --mac --win -p always"
   },
   "eslintConfig": {
     "extends": [
