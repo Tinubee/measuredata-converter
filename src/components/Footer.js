@@ -29,7 +29,6 @@ function Footer() {
           &copy; {developmentDate}-{new Date().getFullYear()} KIM HYOUNG MIN.All
           rights reserved.
         </div>
-        <div>v1.0.0</div>
       </FooterBottom>
     </FooterContainer>
   );

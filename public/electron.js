@@ -99,7 +99,7 @@ autoUpdater.on("update-downloaded", () => {
     .then((result) => {
       const { response } = result;
 
-      if (response === 0) autoUpdater.quitAndInstall(false, true);
+      if (response === 0) autoUpdater.quitAndInstall();
     });
 });
 
