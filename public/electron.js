@@ -1,26 +1,23 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
+const path = require("path");
 const { autoUpdater } = require("electron-updater");
-const log = require("electron-log");
+const ProgressBar = require("electron-progressbar");
 
-let mainWindow;
+let mainWindow = null;
+let progressBar = null;
 
-function createWindow() {
+const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 900,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true,
+      contextIsolation: false,
       devTools: isDev,
+      preload: path.join(__dirname, "preload.js"),
     },
-    icon: __dirname + "/logo1024.png",
   });
-
-  if (isDev) {
-    mainWindow.webContents.openDevTools({ mode: "detach" });
-  }
 
   mainWindow.loadURL(
     isDev
@@ -28,58 +25,100 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  // mainWindow.setResizable(true);
-  // mainWindow.on("closed", () => (mainWindow = null));
-  // mainWindow.focus();
-}
+  if (isDev) {
+    mainWindow.webContents.openDevTools({ mode: "detach" });
+  }
 
-/* Updater ======================================================*/
+  // mainWindow.setResizable(false);
+  mainWindow.setResizable(false);
+  mainWindow.on("closed", () => (mainWindow = null));
+  mainWindow.focus();
+};
+
+ipcMain.on("app_version", (event) => {
+  event.reply("app_version", { version: app.getVersion() });
+});
+
+// 자동으로 업데이트가 되는 것 방지
+autoUpdater.autoDownload = false;
 
 autoUpdater.on("checking-for-update", () => {
-  log.info("업데이트 확인 중...");
-});
-autoUpdater.on("update-available", (info) => {
-  log.info("업데이트가 가능합니다.");
-});
-autoUpdater.on("update-not-available", (info) => {
-  log.info("현재 최신버전입니다.");
-});
-autoUpdater.on("error", (err) => {
-  log.info("에러가 발생하였습니다. 에러내용 : " + err);
-});
-autoUpdater.on("download-progress", (progressObj) => {
-  let log_message = "다운로드 속도: " + progressObj.bytesPerSecond;
-  log_message = log_message + " - 현재 " + progressObj.percent + "%";
-  log_message =
-    log_message +
-    " (" +
-    progressObj.transferred +
-    "/" +
-    progressObj.total +
-    ")";
-  log.info(log_message);
-});
-autoUpdater.on("update-downloaded", (info) => {
-  log.info("업데이트가 완료되었습니다.");
+  console.log("업데이트 확인 중");
 });
 
+autoUpdater.on("update-available", () => {
+  console.log("업데이트 버전 확인");
+
+  dialog
+    .showMessageBox({
+      type: "info",
+      title: "Update",
+      message:
+        "새로운 버전이 확인되었습니다. 설치 파일을 다운로드 하시겠습니까?",
+      buttons: ["지금 설치", "나중에 설치"],
+    })
+    .then((result) => {
+      const { response } = result;
+
+      if (response === 0) autoUpdater.downloadUpdate();
+    });
+});
+
+autoUpdater.on("update-not-available", () => {
+  console.log("업데이트 불가");
+});
+
+autoUpdater.once("download-progress", () => {
+  console.log("설치 중");
+
+  progressBar = new ProgressBar({
+    text: "Download 합니다.",
+  });
+
+  progressBar
+    .on("completed", () => {
+      console.log("설치 완료");
+    })
+    .on("aborted", () => {
+      console.log("aborted");
+    });
+});
+
+autoUpdater.on("update-downloaded", () => {
+  console.log("업데이트 완료");
+
+  progressBar.setCompleted();
+
+  dialog
+    .showMessageBox({
+      type: "info",
+      title: "Update",
+      message: "새로운 버전이 다운로드 되었습니다. 다시 시작하시겠습니까?",
+      buttons: ["예", "아니오"],
+    })
+    .then((result) => {
+      const { response } = result;
+
+      if (response === 0) autoUpdater.quitAndInstall(false, true);
+    });
+});
+
+// electron이 초기화 끝났을 때
 app.on("ready", () => {
   createWindow();
   autoUpdater.checkForUpdates();
 });
 
+// 모든 window가 종료되었을 때
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
+// app이 활성화 되었을 때
 app.on("activate", () => {
-  if (mainWindow === null) {
+  if (!mainWindow) {
     createWindow();
   }
-});
-
-app.on("window-all-closed", () => {
-  app.quit();
 });

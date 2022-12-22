@@ -1,44 +1,12 @@
 {
   "name": "measuredata-converter",
   "version": "0.1.0",
-  "private": true,
-  "main": "./public/electron.js",
+  "productName": "HKC-DataConvertor",
+  "main": "public/electron.js",
   "homepage": "./",
   "build": {
-    "productName": "HKC-DataConvertor",
-    "asar": true,
-    "appId": "org.sss.electron-react",
-    "mac": {
-      "target": [
-        "default"
-      ],
-      "icon": "./public/icon.icns"
-    },
-    "dmg": {
-      "title": "Start Electron"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
-      ],
-      "icon": "./public/favicon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": false,
-      "createDesktopShortcut": true
-    },
-    "directories": {
-      "buildResources": "./resources/installer/",
-      "output": "./dist/",
-      "app": "."
-    }
+    "appId": "HKC-KeyenceDataConvertor",
+    "productName": "electronReact"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -61,14 +29,12 @@
     "web-vitals": "^3.0.4"
   },
   "scripts": {
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
+    "start": "concurrently \"cross-env BROWSER=none npm run start-react\" \"wait-on http://localhost:3000 && npm run start-electron\"",
+    "start-react": "react-scripts start",
+    "start-electron": "electron .",
+    "build": "react-scripts build && electron-builder",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start": "concurrently \"cross-env NODE_ENV=development BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "build": "npm run react-build && electron-builder",
-    "release": "npm run react-build && electron-builder --publish=always",
-    "deploy:win64": "electron-builder --win nsis:x64"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -93,6 +59,8 @@
     "cross-env": "^7.0.3",
     "electron": "^22.0.0",
     "electron-builder": "^23.6.0",
+    "electron-progressbar": "^2.0.1",
+    "electron-updater": "^5.3.0",
     "wait-on": "^7.0.1"
   }
 }

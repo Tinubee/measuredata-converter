@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
+const { ipcRenderer } = window;
 
 const Top = styled.header`
   left: 0;
@@ -20,8 +23,19 @@ const Content = styled.div`
 `;
 
 function Header() {
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    ipcRenderer.send("app_version");
+
+    ipcRenderer.on("app_version", (event, args) => {
+      setVersion(args.version);
+    });
+  }, []);
+
   return (
     <Top>
+      <span>v{version}</span>
       <Content>측정 데이터 변환 프로그램</Content>
     </Top>
   );
