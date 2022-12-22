@@ -10,6 +10,11 @@ const FooterContainer = styled.div`
   padding: 0 20px;
 `;
 
+const FooterBottom = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 function Footer() {
   const developmentDate = 2022;
   return (
@@ -19,10 +24,13 @@ function Footer() {
       </div>
       <div>📩 Email : hyoungmin.kim@hkcb.co.kr</div>
       <hr />
-      <div>
-        &copy; {developmentDate}-{new Date().getFullYear()} KIM HYOUNG MIN.All
-        rights reserved.
-      </div>
+      <FooterBottom>
+        <div>
+          &copy; {developmentDate}-{new Date().getFullYear()} KIM HYOUNG MIN.All
+          rights reserved.
+        </div>
+        <div>v1.0.0</div>
+      </FooterBottom>
     </FooterContainer>
   );
 }
