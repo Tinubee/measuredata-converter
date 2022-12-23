@@ -87,7 +87,7 @@ autoUpdater.once("download-progress", () => {
 autoUpdater.on("update-downloaded", () => {
   console.log("업데이트 완료");
 
-  progressBar.setCompleted();
+  if (progressBar != null) progressBar.setCompleted();
 
   dialog
     .showMessageBox({
@@ -105,7 +105,7 @@ autoUpdater.on("update-downloaded", () => {
           if (mainWindow != null) {
             mainWindow.close();
           }
-          autoUpdater.quitAndInstall(false);
+          autoUpdater.quitAndInstall();
         });
       }
     });
@@ -114,7 +114,7 @@ autoUpdater.on("update-downloaded", () => {
 // electron이 초기화 끝났을 때
 app.on("ready", () => {
   createWindow();
-  autoUpdater.checkForUpdates();
+  autoUpdater.checkForUpdatesAndNotify();
 });
 
 // 모든 window가 종료되었을 때
