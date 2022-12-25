@@ -22,12 +22,17 @@ const Content = styled.div`
   font-weight: 800;
 `;
 
+const Version = styled.span`
+  margin-left: 10px;
+  margin-top: 5px;
+  font-size: 18px;
+`;
+
 function Header() {
   const [version, setVersion] = useState("");
 
   useEffect(() => {
     ipcRenderer.send("app_version");
-
     ipcRenderer.on("app_version", (event, args) => {
       setVersion(args.version);
     });
@@ -35,8 +40,10 @@ function Header() {
 
   return (
     <Top>
-      <span>v{version}</span>
-      <Content>측정 데이터 변환 프로그램</Content>
+      <Content>
+        측정 데이터 변환 프로그램
+        <Version>v{version}</Version>
+      </Content>
     </Top>
   );
 }

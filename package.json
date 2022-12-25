@@ -4,9 +4,28 @@
   "productName": "HKC-DataConvertor",
   "main": "./public/electron.js",
   "homepage": "./",
+  "author": "Tinubee",
+  "description": "HKC-DataConvertor electron project",
+  "private": false,
   "build": {
-    "appId": "com.exmaple.electron",
-    "productName": "HKC-DataConvertor"
+    "appId": "HKC-DataConvertor",
+    "productName": "HKC-DataConvertor",
+    "mac": {
+      "target": "default"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true
+    },
+    "directories": {
+      "buildResources": "./resources/installer/",
+      "output": "./dist/",
+      "app": "."
+    }
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
@@ -17,8 +36,9 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.4.8",
     "electron-progressbar": "^2.0.1",
-    "electron-updater": "^5.3.0",
+    "electron-updater": "^4.6.5",
     "react": "^17.0.2",
     "react-datepicker": "^4.8.0",
     "react-dom": "^17.0.2",
@@ -35,6 +55,7 @@
     "start-react": "react-scripts start",
     "start-electron": "electron .",
     "build": "react-scripts build && electron-builder",
+    "build-win": "electron-builder --win nsis:x64",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -62,5 +83,9 @@
     "electron": "^22.0.0",
     "electron-builder": "^23.6.0",
     "wait-on": "^7.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tinubee/measuredata-converter"
   }
 }
