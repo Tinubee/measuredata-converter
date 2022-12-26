@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
+import packageJson from "../../package.json";
+
 const { ipcRenderer } = window;
 
 const Top = styled.header`
@@ -32,18 +34,20 @@ function Header() {
   const [version, setVersion] = useState("");
 
   useEffect(() => {
-    ipcRenderer.send("app_version");
-    ipcRenderer.on("app_version", (event, args) => {
-      setVersion(args.version);
-    });
+    if (ipcRenderer != null) {
+      ipcRenderer.send("app_version");
+      ipcRenderer.on("app_version", (event, args) => {
+        setVersion(args.version);
+      });
+    } else {
+      setVersion(packageJson.version);
+    }
   }, []);
 
   return (
     <Top>
-      <Content>
-        측정 데이터 변환 프로그램
-        <Version>v{version}</Version>
-      </Content>
+      <Content>측정 데이터 변환 프로그램</Content>
+      <Version>v{version}</Version>
     </Top>
   );
 }

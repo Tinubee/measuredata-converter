@@ -1,5 +1,10 @@
 import { atom } from "recoil";
 
+export const partNumberAtom = atom({
+  key: "partNumber",
+  default: "",
+});
+
 export const checkDataAtom = atom({
   key: "checkdata",
   default: false,

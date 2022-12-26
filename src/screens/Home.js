@@ -1,7 +1,7 @@
 import { faFile } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import {
   cavityAtom,
@@ -10,6 +10,7 @@ import {
   lotNumberAtom,
   moldNumberAtom,
   noteAtom,
+  partNumberAtom,
   processNumberAtom,
   productionDateAtom,
   productTypeAtom,
@@ -112,7 +113,7 @@ const DataName = styled.span`
 `;
 const DataValue = styled(DataName)``;
 
-const BtnReadCsv = styled.button`
+export const BtnReadCsv = styled.button`
   border: 1px solid ${(props) => props.theme.textColor};
   border-radius: 10px;
   font-size: 14px;
@@ -124,6 +125,9 @@ const BtnReadCsv = styled.button`
 `;
 
 const MiddleContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
   margin: auto;
 `;
 
@@ -137,7 +141,7 @@ const InputData = styled.input`
   font-size: large;
 `;
 
-const SettingInfo = styled.div`
+const SettingInfo = styled.form`
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 15px;
@@ -188,6 +192,7 @@ function Home() {
   const [array, setArray] = useState([]);
   const [result, setResult] = useState([]);
 
+  const [partNumber, setPartNumber] = useRecoilState(partNumberAtom);
   const processCode = useRecoilValue(processNumberAtom);
   const factoryCode = useRecoilValue(factoryCodeAtom);
   const moldNumber = useRecoilValue(moldNumberAtom);
@@ -202,11 +207,10 @@ function Home() {
   const fileReader = new FileReader("UTF8");
 
   const BottomDataSet = () => {
-    const partNumber = result[0].split("_")[1];
     const inspectionItemList = headerKeys.slice(7, headerKeys.length);
     const inspectionItemResult = result.slice(7, result.length);
     const inspectionDateTime = DateFormat(result[1]);
-    const inspectionJudgment = result[4] === "Fail" ? "F" : "A";
+    const inspectionJudgment = result[4] === "Fail" || "NG" ? "F" : "A";
     const changeProductionType =
       productionType.split("/")[0] === "초품"
         ? "A"
@@ -234,7 +238,10 @@ function Home() {
   };
 
   const downLoadCSV = (e) => {
+    if (partNumber === "") console.log("null");
+
     e.preventDefault();
+
     if (result.length === 0) {
       return console.log("no data");
     }
@@ -320,8 +327,15 @@ function Home() {
   };
 
   useEffect(() => {
-    if (file !== undefined) console.log(file.name);
-  }, [array, result, headerKeys, file, productionType]);
+    if (result.length !== 0) setPartNumber(result[0].split("_")[1]);
+  }, [array, result, headerKeys, file, productionType, setPartNumber]);
+
+  const addIssues = () => {
+    window.open(
+      "https://github.com/Tinubee/measuredata-converter/issues",
+      "_blank"
+    );
+  };
 
   return (
     <Wrap>
@@ -371,6 +385,7 @@ function Home() {
           >
             변환 파일 다운로드
           </BtnExportCsv>
+          <BtnReadCsv onClick={addIssues}>이슈등록</BtnReadCsv>
         </MiddleContainer>
         <Line />
         <ExportContainer>
@@ -378,6 +393,9 @@ function Home() {
           <Tag />
           <GridBox>
             <SettingInfo>
+              <SettingInfoItem>
+                품번 : <InputData value={partNumber} disabled required />
+              </SettingInfoItem>
               <SettingInfoItem>
                 공정코드 : <InputData value={processCode} disabled />
               </SettingInfoItem>
