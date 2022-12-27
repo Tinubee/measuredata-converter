@@ -217,11 +217,12 @@ function Home() {
         : productionType.split("/")[0] === "중품"
         ? "B"
         : "C";
+    const changeFactoryCode = factoryCode === "1공장" ? "1" : "2";
 
     for (let i = 0; i < inspectionItemList.length; i++) {
       bottomRowData.push(`\n${partNumber}`);
       bottomRowData.push(`${processCode.split("/")[0]}`);
-      bottomRowData.push(`${factoryCode}`);
+      bottomRowData.push(`${changeFactoryCode}`);
       bottomRowData.push(`${moldNumber}`);
       bottomRowData.push(`${cavity}`);
       bottomRowData.push(`${lotNumber}`);
@@ -326,8 +327,22 @@ function Home() {
     return formatDateTime;
   };
 
+  const partNumberFormat = (str) => {
+    let lastString = str[str.length - 1];
+    let firstString = str.slice(0, -1);
+    if (firstString.length !== 9) {
+      firstString = firstString.padEnd(9, 0);
+    }
+
+    return firstString + lastString;
+  };
+
   useEffect(() => {
-    if (result.length !== 0) setPartNumber(result[0].split("_")[1]);
+    if (result.length !== 0) {
+      const formatPartNumber = result[0].split("_")[1];
+      const formatPartNumberResult = partNumberFormat(formatPartNumber);
+      setPartNumber(formatPartNumberResult);
+    }
   }, [array, result, headerKeys, file, productionType, setPartNumber]);
 
   const addIssues = () => {
