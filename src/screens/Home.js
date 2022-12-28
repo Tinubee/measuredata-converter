@@ -207,8 +207,6 @@ function Home() {
   const fileReader = new FileReader("UTF8");
 
   const BottomDataSet = () => {
-    const inspectionItemList = headerKeys.slice(7, headerKeys.length);
-    const inspectionItemResult = result.slice(7, result.length);
     const inspectionDateTime = DateFormat(result[1]);
     const inspectionJudgment = result[4] === "Fail" || "NG" ? "F" : "A";
     const changeProductionType =
@@ -219,7 +217,7 @@ function Home() {
         : "C";
     const changeFactoryCode = factoryCode === "1공장" ? "1" : "2";
 
-    for (let i = 0; i < inspectionItemList.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       bottomRowData.push(`\n${partNumber}`);
       bottomRowData.push(`${processCode.split("/")[0]}`);
       bottomRowData.push(`${changeFactoryCode}`);
@@ -234,7 +232,7 @@ function Home() {
       bottomRowData.push(`${note}`);
       bottomRowData.push(`${specialty}`);
       bottomRowData.push(`${i}`);
-      bottomRowData.push(`${inspectionItemResult[i]}`);
+      bottomRowData.push(`${array[i][1]}`);
     }
   };
 
@@ -286,7 +284,41 @@ function Home() {
       return obj;
     });
 
-    setArray(array);
+    //결과값 QMS 형식에 맞게 변경(RH->LH->엠보->TOP순서)
+    const result = Object.entries(array[3]).slice(7, array[3].length);
+    let finalResult = [];
+    const arrayRH = result.filter((item) => {
+      return item[0].split(":")[0] === "1";
+    });
+    const arrayLH = result.filter((item) => {
+      return item[0].split(":")[0] === "2";
+    });
+    const arrayEmbo = result.filter((item) => {
+      return item[0].split(":")[0] === "3";
+    });
+    const arrayTop = result.filter((item) => {
+      return item[0].split(":")[0] === "4";
+    });
+
+    const count =
+      arrayRH.length > arrayLH.length ? arrayRH.length : arrayLH.length;
+
+    for (let i = 0; i < count; i++) {
+      if (
+        arrayRH[i][0].split(":")[1].split("-")[0].trim() ===
+        arrayLH[i][0].split(":")[1].split("-")[0].trim()
+      ) {
+        finalResult.push(arrayRH[i]);
+        finalResult.push(arrayLH[i]);
+      } else {
+        arrayLH.splice(i, 0, arrayRH[i]);
+        i--;
+      }
+    }
+
+    finalResult = [...new Set(finalResult)].concat(arrayEmbo).concat(arrayTop);
+
+    setArray(finalResult);
     setResult(csvRows[3].split(","));
   };
 
@@ -343,6 +375,7 @@ function Home() {
       const formatPartNumberResult = partNumberFormat(formatPartNumber);
       setPartNumber(formatPartNumberResult);
     }
+    console.log(array);
   }, [array, result, headerKeys, file, productionType, setPartNumber]);
 
   const addIssues = () => {
@@ -381,14 +414,16 @@ function Home() {
           </BtnReadCsv>
 
           <GridBox>
-            {headerKeys.map((item, index) => (
-              <ReadDataList key={index}>
-                <DataName>{item === "" ? "" : item + " = "}</DataName>
-                <DataValue>
-                  {result[index] === "" ? "X" : result[index]}
-                </DataValue>
-              </ReadDataList>
-            ))}
+            {array.length !== 0 ? (
+              array.map((item, index) => (
+                <ReadDataList key={index}>
+                  <DataName>{item[0] + " = "}</DataName>
+                  <DataValue>{item[1] === "" ? "X" : item[1]}</DataValue>
+                </ReadDataList>
+              ))
+            ) : (
+              <h1>데이터 없음</h1>
+            )}
           </GridBox>
         </ReadContainer>
         <Line />
