@@ -12,17 +12,17 @@ export const checkDataAtom = atom({
 
 export const processNumberAtom = atom({
   key: "processNumber",
-  default: "",
+  default: "A05/프레스",
 });
 
 export const factoryCodeAtom = atom({
   key: "factoryCode",
-  default: "",
+  default: "1",
 });
 
 export const moldNumberAtom = atom({
   key: "moldNumber",
-  default: "",
+  default: "1",
 });
 export const cavityAtom = atom({
   key: "cavity",
@@ -34,7 +34,7 @@ export const lotNumberAtom = atom({
 });
 export const productionDateAtom = atom({
   key: "productionDate",
-  default: "",
+  default: new Date().toISOString().slice(0, 10).replace(/-/g, ""),
 });
 
 export const productTypeAtom = atom({
@@ -44,7 +44,7 @@ export const productTypeAtom = atom({
 
 export const inspectorNameAtom = atom({
   key: "inspectorName",
-  default: "",
+  default: "Keyence",
 });
 
 export const noteAtom = atom({

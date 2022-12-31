@@ -19,6 +19,7 @@ import {
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import Tag from "../components/Tag";
+import { dateFormate } from "../utils";
 
 const Wrap = styled.div`
   position: relative;
@@ -207,7 +208,7 @@ function Home() {
   const fileReader = new FileReader("UTF8");
 
   const BottomDataSet = () => {
-    const inspectionDateTime = DateFormat(result[1]);
+    const inspectionDateTime = dateFormate(result[1]);
     const inspectionJudgment = result[4] === "Fail" || "NG" ? "F" : "A";
     const changeProductionType =
       productionType.split("/")[0] === "초품"
@@ -339,26 +340,6 @@ function Home() {
 
   const headerKeys = Object.keys(Object.assign({}, ...array));
 
-  const DateFormat = (date) => {
-    let formatDateTime = "";
-    const splitDate = date.split(" ");
-    const splitTime = splitDate[2].split(":");
-
-    let resultDate = splitDate[0].replace(/-/g, "");
-    let resultTime = "";
-
-    if (splitDate[1] === "오전") {
-      resultTime = splitTime[0] + splitTime[1];
-    } else {
-      splitTime[0] = (parseInt(splitTime[0]) + 12).toString();
-      resultTime = splitTime[0] + splitTime[1];
-    }
-
-    formatDateTime = resultDate + " " + resultTime;
-
-    return formatDateTime;
-  };
-
   const partNumberFormat = (str) => {
     let lastString = str[str.length - 1];
     let firstString = str.slice(0, -1);
@@ -375,7 +356,6 @@ function Home() {
       const formatPartNumberResult = partNumberFormat(formatPartNumber);
       setPartNumber(formatPartNumberResult);
     }
-    console.log(array);
   }, [array, result, headerKeys, file, productionType, setPartNumber]);
 
   const addIssues = () => {
